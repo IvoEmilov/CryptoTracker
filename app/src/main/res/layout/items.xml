@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:id="@+id/cardView"
+        app:cardElevation="4dp"
+        app:cardCornerRadius="6dp"
+        app:strokeColor="#2f2f2f"
+        app:strokeWidth="1dp">
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="200dp">
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/gradient"/>
+
+            <ImageView
+                android:id="@+id/imgCoin"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="15dp"
+                android:scaleType="fitCenter" />
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Coin"
+                android:padding="10dp"
+                android:textSize="20dp"
+                android:textColor="@color/black"
+                android:id="@+id/tvCoin"/>
+            <RelativeLayout
+                android:id="@+id/loChange"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="8dp"
+                android:layout_gravity="bottom"
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Price"
+                    android:padding="5dp"
+                    android:textSize="15sp"
+                    android:textColor="@color/black"
+                    android:id="@+id/tvPrice"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/tvAmount"
+                    android:padding="5dp"
+                    android:text="PNL"
+                    android:gravity="right"
+                    android:textSize="15sp"
+                    android:textColor="@color/black"
+                    android:id="@+id/tvPNL"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/tvPrice"
+                    android:padding="5dp"
+                    android:text="24h Change"
+                    android:textSize="15sp"
+                    android:textColor="@color/black"
+                    android:id="@+id/tv24hChange"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="5dp"
+                    android:text="Amount"
+                    android:gravity="right"
+                    android:textSize="15sp"
+                    android:textColor="@color/black"
+                    android:id="@+id/tvAmount"/>
+            </RelativeLayout>
+
+
+        </FrameLayout>
+
+    </com.google.android.material.card.MaterialCardView>
+
+</LinearLayout>

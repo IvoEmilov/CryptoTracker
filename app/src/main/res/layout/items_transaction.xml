@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="3dp"
+        android:id="@+id/cardView"
+        app:cardElevation="4dp"
+        app:cardCornerRadius="6dp"
+        app:strokeColor="#2f2f2f"
+        app:strokeWidth="1dp">
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/gradient"/>
+
+            <RelativeLayout
+                android:id="@+id/loTransaction"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="8dp"
+                android:layout_gravity="bottom"
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Buy"
+                    android:padding="5dp"
+                    android:textSize="15sp"
+                    android:textColor="@color/black"
+                    android:id="@+id/tvBuySell"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/tvUSD"
+                    android:padding="5dp"
+                    android:text="+0.000647454 BTC"
+                    android:gravity="right"
+                    android:textSize="15sp"
+                    android:textColor="@color/black"
+                    android:id="@+id/tvAmountCoin"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/tvBuySell"
+                    android:padding="5dp"
+                    android:text="2022-03-10 15:43:22"
+                    android:textSize="15sp"
+                    android:textColor="@color/black"
+                    android:id="@+id/tvDate"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="5dp"
+                    android:text="+40 USD"
+                    android:gravity="right"
+                    android:textSize="15sp"
+                    android:textColor="@color/black"
+                    android:id="@+id/tvUSD"/>
+            </RelativeLayout>
+
+
+        </FrameLayout>
+
+    </com.google.android.material.card.MaterialCardView>
+
+</LinearLayout>

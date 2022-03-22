@@ -52,6 +52,7 @@
         android:layout_height="50dp"
         android:indeterminate="true"
         android:layout_gravity="center"
-        android:visibility="gone"/>
+        android:layout_marginTop="40dp"
+        android:visibility="visible"/>
 
 </LinearLayout>

@@ -55,10 +55,10 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
         holder.tvCoin.setText(cardItem.getCoinName());
         holder.tv24hChange.setText(cardItem.getChange24h());
         if(cardItem.getChange24h().charAt(0)=='+'){
-            holder.tv24hChange.setTextColor(Color.GREEN);
+            holder.tv24hChange.setTextColor(Color.parseColor("#116540"));//green
         }
         else{
-            holder.tv24hChange.setTextColor(Color.RED);
+            holder.tv24hChange.setTextColor(Color.parseColor("#e57069"));//red
         }
         holder.tvPrice.setText(cardItem.getPrice());
         holder.tvAmount.setText(cardItem.getAmount());

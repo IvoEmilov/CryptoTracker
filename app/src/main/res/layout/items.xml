@@ -12,7 +12,7 @@
         android:id="@+id/cardView"
         app:cardElevation="4dp"
         app:cardCornerRadius="6dp"
-        app:strokeColor="#2f2f2f"
+        app:strokeColor="#69e5ae"
         app:strokeWidth="1dp">
 
         <FrameLayout

@@ -1,16 +1,22 @@
 package com.example.cryptotracker;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.Dialog;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.media.Image;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -29,31 +35,42 @@ import java.util.ArrayList;
 public class MainActivity extends AppCompatActivity {
 
     static ArrayList<CardItem> cardItems = new ArrayList<>();
-    Button btnProfile;
+    ImageView imgProfile;
     private RecyclerView recyclerView;
     private RecyclerView.Adapter adapter;
     private RecyclerView.LayoutManager layoutManager;
     static ProgressBar progressBar;
+    static CardView btnAddCoin;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        btnProfile = findViewById(R.id.btnProfile);
+        imgProfile = findViewById(R.id.imgProfile);
         progressBar = findViewById(R.id.progressBar);
+        btnAddCoin = findViewById(R.id.btnAddCoin);
 
         loadRecyclerView();
         Scraper scraper = new Scraper(MainActivity.this, adapter);
         scraper.execute();
 
-        btnProfile.setOnClickListener(new View.OnClickListener() {
+        imgProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(MainActivity.this, ProfileActivity.class);
                 startActivity(intent);
             }
         });
+
+        btnAddCoin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                addCoin();
+            }
+        });
     }
+
+
 
     private void loadRecyclerView(){
         recyclerView = findViewById(R.id.recyclerView);
@@ -64,5 +81,19 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setAdapter(adapter);
     }
 
+    private void addCoin(){
+        Dialog dialog = new Dialog(this);
+        dialog.setContentView(R.layout.dialog_addcoin);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
+        ImageView btnClose = dialog.findViewById(R.id.btnClose);
+        btnClose.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
+            }
+        });
+
+        dialog.show();
+    }
 }

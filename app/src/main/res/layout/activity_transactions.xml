@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:background="#ffffff"
+    android:background="#f2f2f2"
     tools:context=".LoginActivity"
     android:orientation="vertical">
     <RelativeLayout
@@ -25,13 +25,13 @@
             android:padding="15dp"
             android:text="Bitcoin\t"
             android:layout_centerInParent="true"
-            android:drawableEnd="@drawable/profile_icon"/>
+            android:drawableEnd="@drawable/ic_cancel"/>
     </RelativeLayout>
 
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="@android:color/darker_gray"/>
+        android:background="#69e5ae"/>
 
     <TextView
         android:id="@+id/tvTotalUSD"

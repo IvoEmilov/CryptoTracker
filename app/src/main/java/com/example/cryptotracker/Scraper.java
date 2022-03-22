@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.animation.AnimationUtils;
 import android.widget.ProgressBar;
 
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import org.jsoup.Jsoup;
@@ -23,7 +24,6 @@ public class Scraper extends AsyncTask<Void, Void, Void> {
     public Scraper(Context context, RecyclerView.Adapter adapter){
         this.context=context;
         this.adapter = adapter;
-
     }
     @Override
     protected void onPreExecute() {
@@ -39,6 +39,7 @@ public class Scraper extends AsyncTask<Void, Void, Void> {
         //hide progress bar
         MainActivity.progressBar.setVisibility(View.GONE);
         MainActivity.progressBar.startAnimation(AnimationUtils.loadAnimation(context, android.R.anim.fade_out));
+        MainActivity.btnAddCoin.setVisibility(View.VISIBLE);
         adapter.notifyDataSetChanged();
     }
 
@@ -86,6 +87,7 @@ public class Scraper extends AsyncTask<Void, Void, Void> {
                 e.printStackTrace();
             }
         }
+
 
         return null;
     }

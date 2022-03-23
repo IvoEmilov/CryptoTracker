@@ -1,6 +1,7 @@
 package com.example.cryptotracker;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.media.Image;
 import android.view.LayoutInflater;
@@ -10,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.squareup.picasso.Picasso;
@@ -18,14 +20,16 @@ import java.util.ArrayList;
 
 public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
     private ArrayList<CardItem> cardItems;
-    Context context;
+    private Context context;
 
     public static class ViewHolder extends RecyclerView.ViewHolder{
-        public ImageView imgCoin;
-        public TextView tvCoin, tvPrice, tvAmount, tv24hChange, tvPNL;
+        private CardView cardView;
+        private ImageView imgCoin;
+        private TextView tvCoin, tvPrice, tvAmount, tv24hChange, tvPNL;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
+            cardView = itemView.findViewById(R.id.cardView);
             imgCoin = itemView.findViewById(R.id.imgCoin);
             tvCoin = itemView.findViewById(R.id.tvCoin);
             tvPrice = itemView.findViewById(R.id.tvPrice);
@@ -63,7 +67,14 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
         holder.tvPrice.setText(cardItem.getPrice());
         holder.tvAmount.setText(cardItem.getAmount());
         holder.tvPNL.setText(cardItem.getPnl());
-
+        holder.cardView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                    Intent intent = new Intent(context, TransactionsActivity.class);
+                    context.startActivity(intent);
+                }
+            }
+        );
     }
 
     @Override

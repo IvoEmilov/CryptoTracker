@@ -16,6 +16,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 
@@ -35,8 +36,9 @@ import java.util.ArrayList;
 public class MainActivity extends AppCompatActivity {
 
     static ArrayList<CardItem> cardItems = new ArrayList<>();
-    ImageView imgProfile;
-    private RecyclerView recyclerView;
+    static ArrayList<String> coins = new ArrayList<>();
+    private ImageView imgProfile;
+    static RecyclerView recyclerView;
     private RecyclerView.Adapter adapter;
     private RecyclerView.LayoutManager layoutManager;
     static ProgressBar progressBar;
@@ -50,8 +52,13 @@ public class MainActivity extends AppCompatActivity {
         progressBar = findViewById(R.id.progressBar);
         btnAddCoin = findViewById(R.id.btnAddCoin);
 
+        coins.add("Bitcoin");
+        coins.add("Ethereum");
+        coins.add("Atom");
+        coins.add("BNB");
+
         loadRecyclerView();
-        Scraper scraper = new Scraper(MainActivity.this, adapter);
+        Scraper scraper = new Scraper(MainActivity.this, adapter, Boolean.TRUE);
         scraper.execute();
 
         imgProfile.setOnClickListener(new View.OnClickListener() {
@@ -87,9 +94,21 @@ public class MainActivity extends AppCompatActivity {
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
         ImageView btnClose = dialog.findViewById(R.id.btnClose);
+        Button btnAdd = dialog.findViewById(R.id.btnAdd);
+        EditText txtCoin = dialog.findViewById(R.id.txtCoin);
         btnClose.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                dialog.dismiss();
+            }
+        });
+
+        btnAdd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                coins.add(txtCoin.getText().toString());
+                Scraper scraper = new Scraper(MainActivity.this, adapter, Boolean.FALSE);
+                scraper.execute();
                 dialog.dismiss();
             }
         });

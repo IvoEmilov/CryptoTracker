@@ -21,9 +21,9 @@ import com.google.firebase.auth.GoogleAuthCredential;
 import com.squareup.picasso.Picasso;
 
 public class ProfileActivity extends AppCompatActivity {
-    Button btnLogout;
-    ImageView imgProfile, imgIcon;
-    TextView tvName;
+    private Button btnLogout;
+    private ImageView imgProfile, imgIcon;
+    private TextView tvName;
 
     @Override
     public void onResume() {

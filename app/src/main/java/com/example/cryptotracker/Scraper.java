@@ -5,9 +5,8 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.view.View;
 import android.view.animation.AnimationUtils;
-import android.widget.ProgressBar;
+import android.widget.Toast;
 
-import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import org.jsoup.Jsoup;
@@ -15,41 +14,49 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
 import java.io.IOException;
-import java.util.ArrayList;
 
 public class Scraper extends AsyncTask<Void, Void, Void> {
     Context context;
     RecyclerView.Adapter adapter;
+    private boolean initFlag;
 
-    public Scraper(Context context, RecyclerView.Adapter adapter){
+    public Scraper(Context context, RecyclerView.Adapter adapter, boolean initFlag){
         this.context=context;
         this.adapter = adapter;
+        this.initFlag = initFlag;
     }
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
-        //show progress bar
-        MainActivity.progressBar.setVisibility(View.VISIBLE);
-        MainActivity.progressBar.startAnimation(AnimationUtils.loadAnimation(context, android.R.anim.fade_in));
+        if(initFlag==Boolean.TRUE){
+            MainActivity.progressBar.setVisibility(View.VISIBLE);
+            MainActivity.progressBar.startAnimation(AnimationUtils.loadAnimation(context, android.R.anim.fade_in));
+        }
     }
 
     @Override
     protected void onPostExecute(Void aVoid) {
         super.onPostExecute(aVoid);
-        //hide progress bar
-        MainActivity.progressBar.setVisibility(View.GONE);
-        MainActivity.progressBar.startAnimation(AnimationUtils.loadAnimation(context, android.R.anim.fade_out));
-        MainActivity.btnAddCoin.setVisibility(View.VISIBLE);
-        adapter.notifyDataSetChanged();
+        if(initFlag==Boolean.TRUE){
+            MainActivity.progressBar.setVisibility(View.GONE);
+            MainActivity.progressBar.startAnimation(AnimationUtils.loadAnimation(context, android.R.anim.fade_out));
+            MainActivity.btnAddCoin.setVisibility(View.VISIBLE);
+            adapter.notifyDataSetChanged();
+            MainActivity.coins.clear();
+        }
+        else{
+            //adapter.notifyItemRangeChanged(0, MainActivity.cardItems.size()-1);
+            adapter.notifyItemInserted(MainActivity.cardItems.size()-1);
+            //adapter.notifyDataSetChanged();
+            MainActivity.coins.clear();
+            //Toast.makeText(context,"Coin added successfully!", Toast.LENGTH_SHORT).show();
+            MainActivity.recyclerView.scrollToPosition(MainActivity.cardItems.size()-1);
+        }
     }
 
     @Override
     protected Void doInBackground(Void... voids) {
-        ArrayList<String> coins = new ArrayList<>();
-        coins.add("Bitcoin");
-        coins.add("Ethereum");
-        coins.add("Atom");
-        for(String coin:coins){
+        for(String coin:MainActivity.coins){
             try{
                 String query = "https://www.google.com/search?q=coinmarketcap+"+coin;
                 Document document = Jsoup.connect(query).get();
@@ -80,7 +87,6 @@ public class Scraper extends AsyncTask<Void, Void, Void> {
                     //e.printStackTrace();
                     change24h = "-"+change24h;
                 }
-
                 MainActivity.cardItems.add(new CardItem(Uri.parse(imgURL),coinName,price,change24h,"None","None"));
             }
             catch (IOException e){

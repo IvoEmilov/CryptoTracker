@@ -5,7 +5,6 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.view.View;
 import android.view.animation.AnimationUtils;
-import android.widget.Toast;
 
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -14,21 +13,24 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class Scraper extends AsyncTask<Void, Void, Void> {
     Context context;
     RecyclerView.Adapter adapter;
     private boolean initFlag;
 
-    public Scraper(Context context, RecyclerView.Adapter adapter, boolean initFlag){
-        this.context=context;
+
+    public Scraper(Context context, RecyclerView.Adapter adapter, boolean initFlag) {
+        this.context = context;
         this.adapter = adapter;
         this.initFlag = initFlag;
     }
+
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
-        if(initFlag==Boolean.TRUE){
+        if (initFlag == Boolean.TRUE) {
             MainActivity.progressBar.setVisibility(View.VISIBLE);
             MainActivity.progressBar.startAnimation(AnimationUtils.loadAnimation(context, android.R.anim.fade_in));
         }
@@ -37,28 +39,27 @@ public class Scraper extends AsyncTask<Void, Void, Void> {
     @Override
     protected void onPostExecute(Void aVoid) {
         super.onPostExecute(aVoid);
-        if(initFlag==Boolean.TRUE){
+        if (initFlag == Boolean.TRUE) {
             MainActivity.progressBar.setVisibility(View.GONE);
             MainActivity.progressBar.startAnimation(AnimationUtils.loadAnimation(context, android.R.anim.fade_out));
             MainActivity.btnAddCoin.setVisibility(View.VISIBLE);
             adapter.notifyDataSetChanged();
             MainActivity.coins.clear();
-        }
-        else{
+        } else {
             //adapter.notifyItemRangeChanged(0, MainActivity.cardItems.size()-1);
-            adapter.notifyItemInserted(MainActivity.cardItems.size()-1);
+            adapter.notifyItemInserted(MainActivity.cardItems.size() - 1);
             //adapter.notifyDataSetChanged();
             MainActivity.coins.clear();
             //Toast.makeText(context,"Coin added successfully!", Toast.LENGTH_SHORT).show();
-            MainActivity.recyclerView.scrollToPosition(MainActivity.cardItems.size()-1);
+            MainActivity.recyclerView.scrollToPosition(MainActivity.cardItems.size() - 1);
         }
     }
 
     @Override
     protected Void doInBackground(Void... voids) {
-        for(String coin:MainActivity.coins){
-            try{
-                String query = "https://www.google.com/search?q=coinmarketcap+"+coin;
+        for (String coin : MainActivity.coins) {
+            try {
+                String query = "https://www.google.com/search?q=coinmarketcap+" + coin;
                 Document document = Jsoup.connect(query).get();
                 Element element = document.select("div.yuRUbf > a").first();
                 String url = element.attr("href"); //1st Google result
@@ -79,22 +80,18 @@ public class Scraper extends AsyncTask<Void, Void, Void> {
                 //24h Change
                 element = document.select("span.sc-15yy2pl-0").first();
                 String change24h = element.text();
-                try{
+                try {
                     element.select("span.icon-Caret-up").first().remove();
-                    change24h = "+"+change24h;
-                }
-                catch (NullPointerException e){
+                    change24h = "+" + change24h;
+                } catch (NullPointerException e) {
                     //e.printStackTrace();
-                    change24h = "-"+change24h;
+                    change24h = "-" + change24h;
                 }
-                MainActivity.cardItems.add(new CardItem(Uri.parse(imgURL),coinName,price,change24h,"None","None"));
-            }
-            catch (IOException e){
+                MainActivity.cardItems.add(new CardItem(Uri.parse(imgURL), coinName, price, change24h, "None", "None"));
+            } catch (IOException e) {
                 e.printStackTrace();
             }
         }
-
-
         return null;
     }
 }

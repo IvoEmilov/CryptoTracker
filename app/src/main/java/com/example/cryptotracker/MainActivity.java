@@ -43,6 +43,7 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView.LayoutManager layoutManager;
     static ProgressBar progressBar;
     static CardView btnAddCoin;
+    Database db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,14 +53,36 @@ public class MainActivity extends AppCompatActivity {
         progressBar = findViewById(R.id.progressBar);
         btnAddCoin = findViewById(R.id.btnAddCoin);
 
+        /*
         coins.add("Bitcoin");
         coins.add("Ethereum");
         coins.add("Atom");
         coins.add("BNB");
+        */
 
+        db = new Database();
+        /*db.getCoins(new CallbackDB() {
+            @Override
+            public void onSuccess(ArrayList<String> coinsDB) {
+                System.out.println("YOOOOOO, I found them coins bruh");
+                coins=coinsDB;
+            }
+        });*/
         loadRecyclerView();
-        Scraper scraper = new Scraper(MainActivity.this, adapter, Boolean.TRUE);
-        scraper.execute();
+
+        db.getUserCoins(new CallbackDB() {
+            @Override
+            public void onSuccess(ArrayList<String> coinsDB) {
+                //System.out.println("TEST COINS FOUND!");
+                coins=coinsDB;
+
+                Scraper scraper = new Scraper(MainActivity.this, adapter, Boolean.TRUE);
+                scraper.execute();
+            }
+        });
+
+
+
 
         imgProfile.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -107,8 +130,10 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 coins.add(txtCoin.getText().toString());
+                db.addCoin(txtCoin.getText().toString());
                 Scraper scraper = new Scraper(MainActivity.this, adapter, Boolean.FALSE);
                 scraper.execute();
+
                 dialog.dismiss();
             }
         });

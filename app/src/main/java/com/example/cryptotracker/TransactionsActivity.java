@@ -35,8 +35,7 @@ public class TransactionsActivity extends AppCompatActivity {
 
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(TransactionsActivity.this, MainActivity.class);
-                startActivity(intent);
+                finish();
             }
         });
     }

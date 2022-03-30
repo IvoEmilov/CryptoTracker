@@ -83,7 +83,7 @@
         android:visibility="gone">
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="200dp">
+        android:layout_height="175dp">
 
     <ImageView
         android:layout_width="match_parent"

@@ -1,6 +1,7 @@
 {
   "project_info": {
     "project_number": "210412694090",
+    "firebase_url": "https://cryptotracker-e9de5-default-rtdb.europe-west1.firebasedatabase.app",
     "project_id": "cryptotracker-e9de5",
     "storage_bucket": "cryptotracker-e9de5.appspot.com"
   },
@@ -13,6 +14,14 @@
         }
       },
       "oauth_client": [
+        {
+          "client_id": "210412694090-vl2cgnqdl2hqce8hljauhg02ig18olkd.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.cryptotracker",
+            "certificate_hash": "3d7d0fb5dfb0ba331a7864a85e902589b73850f0"
+          }
+        },
         {
           "client_id": "210412694090-9m31h2cfdgna7dub0e7hbobues3haqmo.apps.googleusercontent.com",
           "client_type": 3

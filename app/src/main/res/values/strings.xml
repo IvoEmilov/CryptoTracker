@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">CryptoTracker</string>
+    <string-array name="blockchains">
+        <item>ATOM</item>
+        <item>Bitcoin</item>
+        <item>BNB</item>
+        <item>Ethereum</item>
+        <item>Solana</item>
+    </string-array>
 </resources>

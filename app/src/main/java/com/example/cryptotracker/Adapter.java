@@ -4,7 +4,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.media.Image;
+import android.os.Parcelable;
+import android.view.GestureDetector;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -12,32 +15,93 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.squareup.picasso.Picasso;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 
-public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
+public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> implements ItemTouchHelperAdapter{
     private ArrayList<CardItem> cardItems;
     private Context context;
+    private ItemTouchHelper itemTouchHelper;
 
-    public static class ViewHolder extends RecyclerView.ViewHolder{
+    @Override
+    public void onItemMove(int fromPosition, int toPosition) {
+        CardItem fromItem = cardItems.get(fromPosition);
+        cardItems.remove(fromItem);
+        cardItems.add(toPosition, fromItem);
+        notifyItemMoved(fromPosition, toPosition);
+    }
+
+    @Override
+    public void onItemSwiped(int position) {
+        cardItems.remove(position);
+        notifyItemRemoved(position);
+    }
+
+    public void setItemTouchHelper(ItemTouchHelper itemTouchHelper){
+        this.itemTouchHelper = itemTouchHelper;
+    }
+
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnTouchListener, GestureDetector.OnGestureListener{
         private CardView cardView;
         private ImageView imgCoin;
-        private TextView tvCoin, tvPrice, tvAmount, tv24hChange, tvPNL;
+        private TextView tvCoin, tvPrice, tvValue, tv24hChange, tvHoldings;
+        private GestureDetector gestureDetector;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
+            gestureDetector = new GestureDetector(itemView.getContext(), this);
+
             cardView = itemView.findViewById(R.id.cardView);
             imgCoin = itemView.findViewById(R.id.imgCoin);
             tvCoin = itemView.findViewById(R.id.tvCoin);
             tvPrice = itemView.findViewById(R.id.tvPrice);
-            tvAmount = itemView.findViewById(R.id.tvAmount);
+            tvHoldings = itemView.findViewById(R.id.tvHoldings);
             tv24hChange = itemView.findViewById(R.id.tv24hChange);
-            tvPNL = itemView.findViewById(R.id.tvPNL);
+            tvValue = itemView.findViewById(R.id.tvValue);
+        }
+
+        @Override
+        public boolean onDown(MotionEvent motionEvent) {
+            return false;
+        }
+
+        @Override
+        public void onShowPress(MotionEvent motionEvent) {
+
+        }
+
+        @Override
+        public boolean onSingleTapUp(MotionEvent motionEvent) {
+            return false;
+        }
+
+        @Override
+        public boolean onScroll(MotionEvent motionEvent, MotionEvent motionEvent1, float v, float v1) {
+            return false;
+        }
+
+        @Override
+        public void onLongPress(MotionEvent motionEvent) {
+            itemTouchHelper.startDrag(this);
+        }
+
+        @Override
+        public boolean onFling(MotionEvent motionEvent, MotionEvent motionEvent1, float v, float v1) {
+            return false;
+        }
+
+        @Override
+        public boolean onTouch(View view, MotionEvent motionEvent) {
+            gestureDetector.onTouchEvent(motionEvent);
+            return true;
         }
     }
+
     public Adapter(Context context, ArrayList<CardItem> cardItems){
         this.cardItems = cardItems;
         this.context = context;
@@ -65,12 +129,23 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
             holder.tv24hChange.setTextColor(Color.parseColor("#e57069"));//red
         }
         holder.tvPrice.setText(cardItem.getPrice());
-        holder.tvAmount.setText(cardItem.getAmount());
-        holder.tvPNL.setText(cardItem.getPnl());
+
+        DecimalFormat df = new DecimalFormat("#");
+        df.setMaximumFractionDigits(12);
+        holder.tvHoldings.setText(df.format(cardItem.getHoldings())+" "+cardItem.getSymbol());
+        holder.tvValue.setText("$"+String.format("%.2f", cardItem.getValue()));
+        holder.tvValue.setText(String.format("$%.2f",cardItem.getHoldings()*Double.parseDouble(cardItem.getPrice().substring(1).replace(",", ""))));
+
         holder.cardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                     Intent intent = new Intent(context, TransactionsActivity.class);
+                    intent.putExtra("crypto", cardItem.getCoinName());
+                    intent.putExtra("symbol", cardItem.getSymbol());
+                    intent.putExtra("currPrice", cardItem.getPrice());
+                    intent.putExtra("value", cardItem.getValue());
+                    intent.putExtra("holdings", cardItem.getHoldings());
+                    intent.putExtra("uri", cardItem.getImageURL().toString());
                     context.startActivity(intent);
                 }
             }

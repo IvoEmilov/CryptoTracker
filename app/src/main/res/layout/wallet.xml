@@ -8,69 +8,71 @@
     <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="3dp"
-        android:id="@+id/cardViewTs"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:id="@+id/cardView"
         app:cardElevation="4dp"
         app:cardCornerRadius="6dp"
-        app:strokeColor="#2f2f2f"
+        app:strokeColor="#69e5ae"
         app:strokeWidth="1dp">
 
         <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="175dp">
 
             <ImageView
-                android:id="@+id/bg_img_gradient"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@drawable/gradient"/>
 
+            <ImageView
+                android:id="@+id/imgWallet"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="25dp"
+                android:scaleType="fitCenter" />
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="WalletName"
+                android:padding="10dp"
+                android:textSize="20dp"
+                android:textColor="@color/black"
+                android:id="@+id/tvWalletName"/>
             <RelativeLayout
-                android:id="@+id/loTransaction"
+                android:id="@+id/loChange"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="8dp"
                 android:layout_gravity="bottom"
                 android:orientation="horizontal">
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Buy"
-                    android:padding="5dp"
-                    android:textSize="15sp"
-                    android:textColor="@color/black"
-                    android:id="@+id/tvBuySell"/>
+
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@+id/tvUSD"
+                    android:layout_below="@+id/tvWalletUSD"
                     android:padding="5dp"
-                    android:text="+0.000647454 BTC"
+                    android:text="Amount of Coin"
                     android:gravity="right"
                     android:textSize="15sp"
                     android:textColor="@color/black"
-                    android:id="@+id/tvAmountCoin"/>
+                    android:id="@+id/tvWalletAmount"/>
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/tvBuySell"
-                    android:padding="5dp"
-                    android:text="2022-03-10 15:43:22"
-                    android:textSize="15sp"
-                    android:textColor="@color/black"
-                    android:id="@+id/tvDate"/>
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:padding="5dp"
-                    android:text="+40 USD"
+                    android:text="USD"
                     android:gravity="right"
                     android:textSize="15sp"
                     android:textColor="@color/black"
-                    android:id="@+id/tvUSD"/>
+                    android:id="@+id/tvWalletUSD"/>
             </RelativeLayout>
 
 

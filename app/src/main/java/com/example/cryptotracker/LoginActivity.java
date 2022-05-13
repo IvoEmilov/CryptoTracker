@@ -71,7 +71,7 @@ public class LoginActivity extends AppCompatActivity {
                 .build();
 
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
-        mGoogleSignInClient.revokeAccess(); //forces intent to choose account
+        //mGoogleSignInClient.revokeAccess(); //forces intent to choose account
     }
 
     private void signIn() {

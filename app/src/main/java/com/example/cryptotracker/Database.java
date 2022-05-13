@@ -1,8 +1,7 @@
 package com.example.cryptotracker;
 
-import android.content.Context;
-import android.telecom.Call;
-import android.widget.Toast;
+import android.view.View;
+import android.view.animation.AnimationUtils;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -16,34 +15,19 @@ import java.util.ArrayList;
 
 public class Database {
     FirebaseDatabase database = FirebaseDatabase.getInstance(" https://cryptotracker-e9de5-default-rtdb.europe-west1.firebasedatabase.app/");
-    DatabaseReference myRef = database.getReference();
+    DatabaseReference rootRef = database.getReference();
+    DatabaseReference usersRef = database.getReference("users");
     FirebaseUser currUser = FirebaseAuth.getInstance().getCurrentUser();
 
-    public void initDatabase(){
-        //myRef.child("users").child(currUser.getUid()).setValue(currUser.getDisplayName());// Unique user ID
-        //myRef.child("coins").child(currUser.getUid()).setValue(MainActivity.coins);//set initial coins
-        myRef.child("users").child(currUser.getUid()).child("Name").setValue(currUser.getDisplayName());// Unique user ID
-        myRef.child("users").child(currUser.getUid()).child("coins").setValue("Bitcoin");
-        myRef.child("users").child(currUser.getUid()).child("coins_test").push().setValue("Bitcoin");
-        myRef.child("users").child(currUser.getUid()).child("coins_test").push().setValue("Ethereum");
-        myRef.child("users").child(currUser.getUid()).child("coins_test").push().setValue("Luna");
-    }
-/*
-    public void getCoins(final CallbackDB callbackDB){
-        // Read from the database
-        ArrayList<String> coinsDB = new ArrayList<>();
-        myRef = database.getReference("coins").child(currUser.getUid());
-        myRef.addListenerForSingleValueEvent(new ValueEventListener() {
+    public void initDatabase(final CallbackDB innitCB){
+        DatabaseReference userRef = database.getReference("users").child(currUser.getUid());
+        userRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                // This method is called once with the initial value and again
-                // whenever data at this location is updated.
-                for(DataSnapshot postSnapshot: dataSnapshot.getChildren()){
-                    String coin = postSnapshot.getValue(String.class);
-                    System.out.println("Fetching data for"+coin);
-                    coinsDB.add(coin);
+                if(!dataSnapshot.exists()){
+                    userRef.child("Name").setValue(currUser.getDisplayName());
                 }
-                callbackDB.onSuccess(coinsDB);
+                innitCB.onInit();
             }
 
             @Override
@@ -53,22 +37,63 @@ public class Database {
             }
         });
     }
-*/
+/*
     public void getUserCoins(final CallbackDB callbackDB){
-        // Read from the database
+
         ArrayList<String> TestcoinsDB = new ArrayList<>();
-        myRef = database.getReference("users").child(currUser.getUid()).child("coins_test");
-        myRef.addListenerForSingleValueEvent(new ValueEventListener() {
+        DatabaseReference coinsRef = database.getReference("users").child(currUser.getUid()).child("coins");
+        coinsRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                // This method is called once with the initial value and again
-                // whenever data at this location is updated.
+                for(DataSnapshot ds : dataSnapshot.getChildren()) {
+                    String coin = ds.getKey();
+                    System.out.println("DATABASE READ KEY: "+coin);
+                    TestcoinsDB.add(coin);
+                }
+                /*
                 for(DataSnapshot postSnapshot: dataSnapshot.getChildren()){
-                    //System.out.println("We entered here");
                     System.out.println(dataSnapshot.toString());
                     String coin = postSnapshot.getValue(String.class);
-                    //System.out.println("DB TEST COINS: "+coin);
                     TestcoinsDB.add(coin);
+                }
+                //
+                callbackDB.onSuccess(TestcoinsDB);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError error) {
+                // Failed to read value
+                //Toast.makeText(context, "Failed to fetch data from database!", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+
+        ArrayList<String> TestcoinsDB = new ArrayList<>();
+        DatabaseReference coinsRef = database.getReference("users").child(currUser.getUid()).child("coins");
+        coinsRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                for(DataSnapshot ds : dataSnapshot.getChildren()){
+                    String coin = ds.getKey();
+                    //System.out.println("CoinKey is "+coin);
+                    DatabaseReference coinRef = database.getReference("users").child(currUser.getUid()).child("coins").child(coin);
+
+                    coinRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            CoinDB coin = dataSnapshot.getValue(CoinDB.class);
+                            System.out.println("Crypto is " + coin.getCryptocurrency());
+                            TestcoinsDB.add(coin.getCryptocurrency());
+                            //MainActivity.coins.add(coin);
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError error) {
+                            // Failed to read value
+                            //Toast.makeText(context, "Failed to fetch data from database!", Toast.LENGTH_SHORT).show();
+                        }
+                    });
                 }
                 callbackDB.onSuccess(TestcoinsDB);
             }
@@ -79,13 +104,83 @@ public class Database {
                 //Toast.makeText(context, "Failed to fetch data from database!", Toast.LENGTH_SHORT).show();
             }
         });
-    }
 
-    public void addCoin(String coin){
+    }
+*/
+    public void addCoin(CoinDB coin){
+        /*
         System.out.println("DB Request add coin "+coin);
-        myRef = database.getReference("users");
-        myRef.child(currUser.getUid()).child("coins_test").push().setValue(coin);
+        rootRef = database.getReference("users");
+        rootRef.child(currUser.getUid()).child("coins").push().setValue(coin);
+         */
+
+        //CoinDB coin = new CoinDB("Bitcoin");
+        usersRef.child(currUser.getUid()).child("coins").child(coin.getCryptocurrency()).setValue(coin);
     }
 
+    public void addWallet(Wallet wallet){
+        System.out.println("DB Request to add wallet ");
+        usersRef.child(currUser.getUid()).child("wallets").push().setValue(wallet);
+    }
+
+    public void addTransaction(CoinDB coin){
+        usersRef.child(currUser.getUid()).child("coins").child(coin.getCryptocurrency()).child("transactions").setValue(coin.getTransactions());
+    }
+
+    public void getUserCoins(final CallbackDB callback){
+/*
+        rootRef = database.getReference("users");
+        CoinDB coin = new CoinDB("Bitcoin");
+        rootRef.child(currUser.getUid()).child("test").child(coin.getCryptocurrency()).setValue(coin);
+        coin.addCoinTransaction(new CoinTransaction("Buy","233-333-11","13","1.2"));
+        rootRef = database.getReference("users");
+        rootRef.child(currUser.getUid()).child("test").child(coin.getCryptocurrency()).child("transactions").setValue(coin.getTransactions());
+*/
+        ArrayList<String> keys = new ArrayList<>();
+        ArrayList<CoinDB> coinsDB = new ArrayList<>();
+        DatabaseReference keysRef = database.getReference("users").child(currUser.getUid()).child("coins");
+        keysRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if(!dataSnapshot.exists()){
+                    MainActivity.progressBar.setVisibility(View.GONE);
+                    MainActivity.btnAddCoin.setVisibility(View.VISIBLE);
+                }
+
+                for(DataSnapshot ds : dataSnapshot.getChildren()){
+                    keys.add(ds.getKey());
+                }
+                for(String coin: keys){
+                    DatabaseReference coinRef = database.getReference("users").child(currUser.getUid()).child("coins").child(coin);
+                    coinRef.addListenerForSingleValueEvent(new ValueEventListener() {
+
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            CoinDB coin = dataSnapshot.getValue(CoinDB.class);
+                            coinsDB.add(coin);
+                            if(coinsDB.size() == keys.size()){
+                                callback.onSuccess(coinsDB);
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError error) {
+                            // Failed to read value
+                            //Toast.makeText(context, "Failed to fetch data from database!", Toast.LENGTH_SHORT).show();
+                            System.out.println("Failed to read: Inner");
+                        }
+                    });
+                }
+            }
+
+
+            @Override
+            public void onCancelled(DatabaseError error) {
+                // Failed to read value
+                //Toast.makeText(context, "Failed to fetch data from database!", Toast.LENGTH_SHORT).show();
+                System.out.println("Failed to read: Outer");
+            }
+        });
+    }
 
 }

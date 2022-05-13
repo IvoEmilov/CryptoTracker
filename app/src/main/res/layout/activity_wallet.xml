@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:background="#f2f2f2"
     android:orientation="vertical"
-    tools:context=".MainActivity">
+    tools:context=".WalletActivity">
 
     <RelativeLayout
         android:id="@+id/loHeader"
@@ -34,7 +34,7 @@
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
             android:padding="15dp"
-            android:text="Portfolio Overview"
+            android:text="Wallets"
             android:textColor="#1f1f1f"
             android:textSize="25sp" />
     </RelativeLayout>
@@ -58,13 +58,13 @@
 
 
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rvCoins"
+                android:id="@+id/rvWallets"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:scrollbars="vertical" />
 
             <ProgressBar
-                android:id="@+id/progressBar"
+                android:id="@+id/pbWallets"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:layout_centerHorizontal="true"
@@ -75,15 +75,15 @@
                 android:visibility="visible" />
 
             <com.google.android.material.card.MaterialCardView
-                android:id="@+id/btnAddCoin"
+                android:id="@+id/btnAddWallet"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/rvCoins"
+                android:layout_below="@+id/rvWallets"
                 android:layout_marginStart="20dp"
                 android:layout_marginTop="10dp"
                 android:layout_marginEnd="20dp"
                 android:layout_marginBottom="90dp"
-                android:visibility="gone"
+                android:visibility="visible"
                 app:cardCornerRadius="6dp"
                 app:cardElevation="4dp"
                 app:strokeColor="#69e5ae"
@@ -97,21 +97,23 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:background="@drawable/gradient" />
-
                     <ImageView
-                        android:id="@+id/imgAdd"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:id="@+id/imgAddWallet"
+                        android:layout_width="96dp"
+                        android:layout_height="96dp"
                         android:layout_centerInParent="true"
-                        android:background="@drawable/ic_add_circle"
+                        android:layout_marginBottom="-10dp"
+                        android:src="@drawable/wallet"
                         android:backgroundTint="#1f1f1f" />
+
+
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_below="@+id/imgAdd"
+                        android:layout_below="@+id/imgAddWallet"
                         android:layout_centerInParent="true"
-                        android:text="Add new coin"
+                        android:text="Add new wallet"
                         android:textColor="#1f1f1f"
                         android:textSize="20sp" />
                 </RelativeLayout>
@@ -133,10 +135,11 @@
             android:orientation="horizontal">
 
             <LinearLayout
+                android:id="@+id/btnCoins"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:background="@drawable/footer_layout_border_leftbtn_filled"
+                android:background="@drawable/footer_layout_border_leftbtn"
                 android:orientation="vertical">
 
                 <ImageView
@@ -156,11 +159,10 @@
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/btnWallets"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:background="@drawable/footer_layout_border_rightbtn"
+                android:background="@drawable/footer_layout_border_rightbtn_filled"
                 android:orientation="vertical">
 
                 <ImageView

@@ -18,14 +18,20 @@
             android:layout_margin="5dp"
             android:src="@drawable/icon"/>
         <TextView
+            android:id="@+id/tvCryptoName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="25sp"
             android:textColor="#1f1f1f"
             android:padding="15dp"
-            android:text="Bitcoin\t"
-            android:layout_centerInParent="true"
-            android:drawableEnd="@drawable/ic_cancel"/>
+            android:text="Cryptocurrency\t"
+            android:layout_centerInParent="true"/>
+        <ImageView
+            android:id="@+id/imgCoin"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_marginTop="15dp"
+            android:layout_toRightOf="@+id/tvCryptoName"/>
     </RelativeLayout>
 
     <View
@@ -34,20 +40,28 @@
         android:background="#69e5ae"/>
 
     <TextView
-        android:id="@+id/tvTotalUSD"
+        android:id="@+id/tvTotalBalance"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="$100"
+        android:text="$0"
         android:textSize="48sp"
         android:textColor="@color/black"
         android:layout_gravity="center_horizontal"
         android:paddingTop="20dp"/>
     <TextView
-        android:id="@+id/tvTotalAmount"
+        android:id="@+id/tvTotalHoldings"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="0.00123003 BTC"
+        android:text="0 Symbol"
         android:textSize="26sp"
+        android:layout_gravity="center_horizontal"
+        android:paddingBottom="5dp"/>
+    <TextView
+        android:id="@+id/tvTotalInvested"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Invested"
+        android:textSize="16sp"
         android:layout_gravity="center_horizontal"
         android:paddingBottom="20dp"/>
 
@@ -69,7 +83,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_column="0"
-                android:text="42000$"
+                android:text="$0"
                 android:paddingTop="20dp"
                 android:textColor="@color/black"
                 android:textSize="32sp"
@@ -84,6 +98,7 @@
 
         </LinearLayout>
         <LinearLayout
+            android:id="@+id/llPNL"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
@@ -95,7 +110,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_column="0"
-                android:text="-70.5$"
+                android:text="$0"
                 android:paddingTop="20dp"
                 android:textColor="@color/black"
                 android:textSize="32sp"
@@ -109,7 +124,9 @@
                 android:paddingBottom="20dp"/>
         </LinearLayout>
     </LinearLayout>
-
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -117,6 +134,17 @@
         android:textSize="24sp"
         android:paddingTop="5dp"
         android:paddingStart="10dp"/>
+
+        <Button
+            android:id="@+id/btnTransactionDialog"
+            android:layout_width="50dp"
+            android:layout_height="wrap_content"
+            android:text="+"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="10dp"
+            android:textColor="@color/black"
+            android:backgroundTint="#69e5ae"/>
+    </RelativeLayout>
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"

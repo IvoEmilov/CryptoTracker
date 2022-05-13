@@ -3,8 +3,10 @@ package com.example.cryptotracker;
 import android.content.Context;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Handler;
 import android.view.View;
 import android.view.animation.AnimationUtils;
+import android.widget.Toast;
 
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -18,6 +20,8 @@ public class Scraper extends AsyncTask<Void, Void, Void> {
     Context context;
     RecyclerView.Adapter adapter;
     private boolean initFlag;
+    private boolean existingItemFlag = Boolean.FALSE;
+    private int existingItemPosition;
     Database db = new Database();
 
 
@@ -47,12 +51,18 @@ public class Scraper extends AsyncTask<Void, Void, Void> {
             adapter.notifyDataSetChanged();
 //            MainActivity.coins.clear();
         } else {
-            //adapter.notifyItemRangeChanged(0, MainActivity.cardItems.size()-1);
-            adapter.notifyItemInserted(MainActivity.cardItems.size() - 1);
-            //adapter.notifyDataSetChanged();
+            if(!existingItemFlag){
+                //adapter.notifyItemRangeChanged(0, MainActivity.cardItems.size()-1);
+                adapter.notifyItemInserted(MainActivity.cardItems.size() - 1);
+                //adapter.notifyDataSetChanged();
 //            MainActivity.coins.clear();
-            //Toast.makeText(context,"Coin added successfully!", Toast.LENGTH_SHORT).show();
-            MainActivity.rvCoins.scrollToPosition(MainActivity.cardItems.size() - 1);
+                //Toast.makeText(context,"Coin added successfully!", Toast.LENGTH_SHORT).show();
+                MainActivity.rvCoins.scrollToPosition(MainActivity.cardItems.size() - 1);
+            }
+            else{
+                MainActivity.rvCoins.smoothScrollToPosition(existingItemPosition);
+                Toast.makeText(context,"Cryptocurrency is already present.", Toast.LENGTH_SHORT).show();
+            }
         }
     }
 
@@ -64,7 +74,7 @@ public class Scraper extends AsyncTask<Void, Void, Void> {
             }
         }
         else{
-            queryExecute(MainActivity.coins.get(MainActivity.coins.size()-1));
+                queryExecute(MainActivity.coins.get(MainActivity.coins.size()-1));
         }
 
         return null;
@@ -91,13 +101,20 @@ public class Scraper extends AsyncTask<Void, Void, Void> {
             String coinName = element.text();
             System.out.println(coinName);
             //Get value and holdings of crypto for cardItemView
-            for(int i=0;i<MainActivity.coins.size();i++){
-                if(MainActivity.coins.get(i).getCryptocurrency().equals(coin.getCryptocurrency())){
-                    MainActivity.coins.get(i).setCryptocurrency(coinName);
-                    MainActivity.coins.get(i).setSymbol(symbol);
-                    for(CoinTransaction transaction:MainActivity.coins.get(i).getTransactions()){
-                        value+=transaction.getUSD();
-                        holdings+=transaction.getAmountCoin();
+            if(!initFlag){
+                for(CardItem cardItem:MainActivity.cardItems){
+                    if(cardItem.getCoin().getCryptocurrency().equals(coinName)){
+                        System.out.println(coinName+" already exists in the list");
+                        MainActivity.coins.remove(coin);
+                        existingItemFlag = Boolean.TRUE;
+                        existingItemPosition = cardItem.getCoin().getPosition();
+                        return;
+                    }
+                }
+                for(int i=0;i<MainActivity.coins.size();i++){
+                    if(MainActivity.coins.get(i).getCryptocurrency().equals(coin.getCryptocurrency())){
+                            MainActivity.coins.get(i).setCryptocurrency(coinName);
+                            MainActivity.coins.get(i).setSymbol(symbol);
                     }
                 }
             }
@@ -115,7 +132,7 @@ public class Scraper extends AsyncTask<Void, Void, Void> {
                 //e.printStackTrace();
                 change24h = "-" + change24h;
             }
-            MainActivity.cardItems.add(new CardItem(Uri.parse(imgURL), coinName, symbol,price, change24h, holdings, value));
+            MainActivity.cardItems.add(new CardItem(Uri.parse(imgURL), coin,price, change24h));
             db.addCoin(coin);
         } catch (IOException e) {
             e.printStackTrace();

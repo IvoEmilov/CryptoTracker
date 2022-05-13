@@ -182,5 +182,11 @@ public class Database {
             }
         });
     }
-
+    
+    public void updateCoinPosition(CoinDB coin){
+        usersRef.child(currUser.getUid()).child("coins").child(coin.getCryptocurrency()).child("position").setValue(coin.getPosition());
+    }
+    public void removeCoin(CoinDB coin){
+        usersRef.child(currUser.getUid()).child("coins").child(coin.getCryptocurrency()).removeValue();
+    }
 }

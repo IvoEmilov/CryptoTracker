@@ -7,32 +7,30 @@ import java.io.Serializable;
 
 public class CardItem {
     private Uri imageURL;
-    private String coinName;
-    String symbol;
+    private CoinDB coin;
     private String price;
     private String change24h;
-    private Double holdings;
-    private Double value;
+    private Double holdings = 0.0;
+    private Double value = 0.0;
 
-    public CardItem(Uri imageURL, String coinName, String symbol, String price, String change24h, Double holdings, Double value){
+    public CardItem(Uri imageURL, CoinDB coin, String price, String change24h){
         this.imageURL = imageURL;
-        this.coinName = coinName;
-        this.symbol = symbol;
+        this.coin = coin;
         this.price = price;
         this.change24h = change24h;
-        this.holdings = holdings;
-        this.value = value;
+        for(CoinTransaction transaction: coin.getTransactions()) {
+            value += transaction.getUSD();
+            holdings += transaction.getAmountCoin();
+        }
     }
 
     public Uri getImageURL() {
         return imageURL;
     }
 
-    public String getCoinName() {
-        return coinName;
+    public CoinDB getCoin(){
+        return coin;
     }
-
-    public String getSymbol(){ return symbol;}
 
     public String getPrice() {
         return price;
@@ -48,5 +46,13 @@ public class CardItem {
 
     public Double getValue() {
         return value;
+    }
+
+    public void setHoldings(Double holdings) {
+        this.holdings = holdings;
+    }
+
+    public void setValue(Double value) {
+        this.value = value;
     }
 }

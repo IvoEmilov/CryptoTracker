@@ -18,7 +18,12 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -28,7 +33,7 @@ public class MainActivity extends AppCompatActivity {
     private ImageView imgProfile;
     private LinearLayout btnWallets;
     static RecyclerView rvCoins;
-    private Adapter adapter;
+    static Adapter adapter;
     private RecyclerView.LayoutManager layoutManager;
     static ProgressBar progressBar;
     static CardView btnAddCoin;
@@ -56,6 +61,7 @@ public class MainActivity extends AppCompatActivity {
                         @Override
                         public void onSuccess(ArrayList<CoinDB> coinsDB) {
                             coins=coinsDB;
+                            sortCoins();
                             Scraper scraper = new Scraper(MainActivity.this, adapter, Boolean.TRUE);
                             scraper.execute();
                         }
@@ -135,7 +141,7 @@ public class MainActivity extends AppCompatActivity {
         btnAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                CoinDB coin = new CoinDB(txtCoin.getText().toString());
+                CoinDB coin = new CoinDB(txtCoin.getText().toString(), adapter.getItemCount());
                 //coins.add(txtCoin.getText().toString());
                 coins.add(coin);
 //                db.addCoin(coin);
@@ -146,5 +152,15 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         dialog.show();
+    }
+
+    public static void sortCoins(){
+        Collections.sort(coins, new Comparator<CoinDB>() {
+            @Override
+            public int compare(CoinDB o1, CoinDB o2) {
+                    if( o1.getPosition() > o2.getPosition()) return 1;
+                    else return -1;
+            }
+        });
     }
 }

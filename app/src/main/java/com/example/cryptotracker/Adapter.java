@@ -27,18 +27,47 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> implements
     private ArrayList<CardItem> cardItems;
     private Context context;
     private ItemTouchHelper itemTouchHelper;
+    private Database db;
 
     @Override
     public void onItemMove(int fromPosition, int toPosition) {
         CardItem fromItem = cardItems.get(fromPosition);
         cardItems.remove(fromItem);
         cardItems.add(toPosition, fromItem);
+        fromItem.getCoin().setPosition(toPosition);
+        db.updateCoinPosition(fromItem.getCoin());
+        System.out.println(fromItem.getCoin().getCryptocurrency()+" moved to position "+toPosition);
+        if(fromPosition>toPosition){
+            for(int i=toPosition+1;i<=fromPosition;i++){
+                MainActivity.cardItems.get(i).getCoin().setPosition(MainActivity.cardItems.get(i).getCoin().getPosition()+1);
+                System.out.println(MainActivity.cardItems.get(i).getCoin().getCryptocurrency() + " position changed to "+(MainActivity.cardItems.get(i).getCoin().getPosition()));
+                db.updateCoinPosition(MainActivity.cardItems.get(i).getCoin());
+            }
+        }
+        else{
+            for(int i=fromPosition;i<toPosition;i++){
+                MainActivity.cardItems.get(i).getCoin().setPosition(MainActivity.cardItems.get(i).getCoin().getPosition()-1);
+                System.out.println(MainActivity.cardItems.get(i).getCoin().getCryptocurrency() + " position changed to "+(MainActivity.cardItems.get(i).getCoin().getPosition()));
+                db.updateCoinPosition(MainActivity.cardItems.get(i).getCoin());
+            }
+        }
+        MainActivity.sortCoins();
         notifyItemMoved(fromPosition, toPosition);
     }
 
     @Override
     public void onItemSwiped(int position) {
+        db.removeCoin(MainActivity.coins.get(position));
         cardItems.remove(position);
+        MainActivity.coins.remove(position);
+        for(CoinDB coin:MainActivity.coins){
+            System.out.println("After removal: "+coin.getCryptocurrency());
+        }
+        for(int i=position;i<MainActivity.cardItems.size();i++){
+            MainActivity.cardItems.get(i).getCoin().setPosition(MainActivity.cardItems.get(i).getCoin().getPosition()-1);
+            System.out.println(MainActivity.cardItems.get(i).getCoin().getCryptocurrency() + " position changed to "+(MainActivity.cardItems.get(i).getCoin().getPosition()));
+            db.updateCoinPosition(MainActivity.cardItems.get(i).getCoin());
+        }
         notifyItemRemoved(position);
     }
 
@@ -105,6 +134,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> implements
     public Adapter(Context context, ArrayList<CardItem> cardItems){
         this.cardItems = cardItems;
         this.context = context;
+        db = new Database();
     }
 
     @NonNull
@@ -120,7 +150,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> implements
         CardItem cardItem = cardItems.get(position);
 
         Picasso.with(context).load(cardItem.getImageURL()).into(holder.imgCoin);
-        holder.tvCoin.setText(cardItem.getCoinName());
+        holder.tvCoin.setText(cardItem.getCoin().getCryptocurrency());
         holder.tv24hChange.setText(cardItem.getChange24h());
         if(cardItem.getChange24h().charAt(0)=='+'){
             holder.tv24hChange.setTextColor(Color.parseColor("#116540"));//green
@@ -132,7 +162,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> implements
 
         DecimalFormat df = new DecimalFormat("#");
         df.setMaximumFractionDigits(12);
-        holder.tvHoldings.setText(df.format(cardItem.getHoldings())+" "+cardItem.getSymbol());
+        holder.tvHoldings.setText(df.format(cardItem.getHoldings())+" "+cardItem.getCoin().getSymbol());
         holder.tvValue.setText("$"+String.format("%.2f", cardItem.getValue()));
         holder.tvValue.setText(String.format("$%.2f",cardItem.getHoldings()*Double.parseDouble(cardItem.getPrice().substring(1).replace(",", ""))));
 
@@ -140,8 +170,8 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> implements
             @Override
             public void onClick(View view) {
                     Intent intent = new Intent(context, TransactionsActivity.class);
-                    intent.putExtra("crypto", cardItem.getCoinName());
-                    intent.putExtra("symbol", cardItem.getSymbol());
+                    intent.putExtra("crypto", cardItem.getCoin().getCryptocurrency());
+                    intent.putExtra("symbol", cardItem.getCoin().getSymbol());
                     intent.putExtra("currPrice", cardItem.getPrice());
                     intent.putExtra("value", cardItem.getValue());
                     intent.putExtra("holdings", cardItem.getHoldings());

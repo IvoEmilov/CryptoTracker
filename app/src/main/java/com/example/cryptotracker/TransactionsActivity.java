@@ -86,7 +86,7 @@ public class TransactionsActivity extends AppCompatActivity {
         for(CoinDB coin:MainActivity.coins){
             if(crypto.equals(coin.getCryptocurrency())){
                 coinTransactions = coin.getTransactions();
-                sortDates(coinTransactions);
+                sortDates();
             }
         }
 
@@ -227,6 +227,7 @@ public class TransactionsActivity extends AppCompatActivity {
                     amount = -amount;
                 }
 
+
                 CoinTransaction coinTransaction = new CoinTransaction(radioBtn.getText().toString(), tvDateTime.getText().toString(), fiat, amount);
                 for(int i=0;i<MainActivity.coins.size();i++){
                     if(MainActivity.coins.get(i).getCryptocurrency().equals(crypto)){
@@ -237,11 +238,19 @@ public class TransactionsActivity extends AppCompatActivity {
 
                 value += fiat;
                 holdings += amount;
+                for(int i=0; i<MainActivity.cardItems.size();i++){
+                    if(MainActivity.cardItems.get(i).getCoin().getCryptocurrency().equals(crypto)){
+                        MainActivity.cardItems.get(i).setHoldings(holdings);
+                        MainActivity.cardItems.get(i).setValue(value);
+                        MainActivity.adapter.notifyDataSetChanged();
+                    }
+                }
+
                 tvTotalBalance.setText("$"+String.format("%.2f", holdings*currPrice));
                 tvTotalInvested.setText("$"+String.format("%.2f", value)+" Total investment");
                 tvHoldings.setText(df.format(holdings)+" "+symbol);
                 calculateAvgPNL();
-                sortDates(coinTransactions);
+                sortDates();
                 adapterTransactions.notifyDataSetChanged();
 
                 dialog.dismiss();
@@ -276,7 +285,7 @@ public class TransactionsActivity extends AppCompatActivity {
         }
     }
 
-    private void sortDates(ArrayList<CoinTransaction> coinTransactions){
+    private void sortDates(){
         Collections.sort(coinTransactions, new Comparator<CoinTransaction>() {
             DateFormat f = new SimpleDateFormat("yyyy-MM-dd HH:mm");
             @Override

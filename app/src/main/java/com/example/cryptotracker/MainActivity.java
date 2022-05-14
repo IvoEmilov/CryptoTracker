@@ -2,6 +2,7 @@ package com.example.cryptotracker;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
+import androidx.core.widget.NestedScrollView;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -33,6 +34,7 @@ public class MainActivity extends AppCompatActivity {
     private ImageView imgProfile;
     private LinearLayout btnWallets;
     static RecyclerView rvCoins;
+    static NestedScrollView nestedSV;
     static Adapter adapter;
     private RecyclerView.LayoutManager layoutManager;
     static ProgressBar progressBar;
@@ -110,7 +112,9 @@ public class MainActivity extends AppCompatActivity {
 
 
     private void loadRecyclerView(){
+        nestedSV = findViewById(R.id.nestedSV);
         rvCoins = findViewById(R.id.rvCoins);
+        rvCoins.setNestedScrollingEnabled(false);
         //recyclerView.setHasFixedSize(true);//if I know it won't change in size
         layoutManager = new LinearLayoutManager(this);
         adapter = new Adapter(this, cardItems);

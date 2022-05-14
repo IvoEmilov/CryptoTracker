@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.animation.AnimationUtils;
 import android.widget.Toast;
 
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import org.jsoup.Jsoup;
@@ -49,18 +50,14 @@ public class Scraper extends AsyncTask<Void, Void, Void> {
             MainActivity.progressBar.startAnimation(AnimationUtils.loadAnimation(context, android.R.anim.fade_out));
             MainActivity.btnAddCoin.setVisibility(View.VISIBLE);
             adapter.notifyDataSetChanged();
-//            MainActivity.coins.clear();
         } else {
             if(!existingItemFlag){
-                //adapter.notifyItemRangeChanged(0, MainActivity.cardItems.size()-1);
                 adapter.notifyItemInserted(MainActivity.cardItems.size() - 1);
-                //adapter.notifyDataSetChanged();
-//            MainActivity.coins.clear();
-                //Toast.makeText(context,"Coin added successfully!", Toast.LENGTH_SHORT).show();
                 MainActivity.rvCoins.scrollToPosition(MainActivity.cardItems.size() - 1);
             }
             else{
-                MainActivity.rvCoins.smoothScrollToPosition(existingItemPosition);
+                final float y = MainActivity.rvCoins.getChildAt(existingItemPosition).getY();
+                MainActivity.nestedSV.smoothScrollTo(0, Math.round(y));
                 Toast.makeText(context,"Cryptocurrency is already present.", Toast.LENGTH_SHORT).show();
             }
         }

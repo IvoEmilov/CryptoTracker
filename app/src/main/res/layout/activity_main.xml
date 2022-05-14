@@ -46,7 +46,8 @@
         android:layout_below="@+id/loHeader"
         android:background="#69e5ae" />
 
-    <ScrollView
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/nestedSV"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/hor_line">
@@ -118,7 +119,7 @@
             </com.google.android.material.card.MaterialCardView>
 
         </RelativeLayout>
-    </ScrollView>
+    </androidx.core.widget.NestedScrollView>
 
     <LinearLayout
         android:id="@+id/loFooter"

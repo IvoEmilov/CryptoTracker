@@ -61,6 +61,9 @@ public class MainActivity extends AppCompatActivity {
                         public void onInit() {}
 
                         @Override
+                        public void onSuccessWallets(ArrayList<Wallet> walletsDB) {}
+
+                        @Override
                         public void onSuccess(ArrayList<CoinDB> coinsDB) {
                             coins=coinsDB;
                             sortCoins();
@@ -70,21 +73,11 @@ public class MainActivity extends AppCompatActivity {
                     });
             }
             @Override
-            public void onSuccess(ArrayList<CoinDB> coinsDB) {
+            public void onSuccess(ArrayList<CoinDB> coinsDB) {}
 
-            }
-        });
-        /*
-        db.test(new CallbackDB() {
             @Override
-            public void onSuccess(ArrayList<CoinDB> coinsDB) {
-                coins=coinsDB;
-                System.out.println("Scraper TRIGGER");
-                Scraper scraper = new Scraper(MainActivity.this, adapter, Boolean.TRUE);
-                scraper.execute();
-            }
+            public void onSuccessWallets(ArrayList<Wallet> walletsDB) {}
         });
-*/
 
         imgProfile.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -146,9 +139,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 CoinDB coin = new CoinDB(txtCoin.getText().toString(), adapter.getItemCount());
-                //coins.add(txtCoin.getText().toString());
                 coins.add(coin);
-//                db.addCoin(coin);
+
                 Scraper scraper = new Scraper(MainActivity.this, adapter, Boolean.FALSE);
                 scraper.execute();
 

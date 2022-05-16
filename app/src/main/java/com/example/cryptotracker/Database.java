@@ -37,95 +37,6 @@ public class Database {
             }
         });
     }
-/*
-    public void getUserCoins(final CallbackDB callbackDB){
-
-        ArrayList<String> TestcoinsDB = new ArrayList<>();
-        DatabaseReference coinsRef = database.getReference("users").child(currUser.getUid()).child("coins");
-        coinsRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                for(DataSnapshot ds : dataSnapshot.getChildren()) {
-                    String coin = ds.getKey();
-                    System.out.println("DATABASE READ KEY: "+coin);
-                    TestcoinsDB.add(coin);
-                }
-                /*
-                for(DataSnapshot postSnapshot: dataSnapshot.getChildren()){
-                    System.out.println(dataSnapshot.toString());
-                    String coin = postSnapshot.getValue(String.class);
-                    TestcoinsDB.add(coin);
-                }
-                //
-                callbackDB.onSuccess(TestcoinsDB);
-            }
-
-            @Override
-            public void onCancelled(DatabaseError error) {
-                // Failed to read value
-                //Toast.makeText(context, "Failed to fetch data from database!", Toast.LENGTH_SHORT).show();
-            }
-        });
-
-
-        ArrayList<String> TestcoinsDB = new ArrayList<>();
-        DatabaseReference coinsRef = database.getReference("users").child(currUser.getUid()).child("coins");
-        coinsRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-
-                for(DataSnapshot ds : dataSnapshot.getChildren()){
-                    String coin = ds.getKey();
-                    //System.out.println("CoinKey is "+coin);
-                    DatabaseReference coinRef = database.getReference("users").child(currUser.getUid()).child("coins").child(coin);
-
-                    coinRef.addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(DataSnapshot dataSnapshot) {
-                            CoinDB coin = dataSnapshot.getValue(CoinDB.class);
-                            System.out.println("Crypto is " + coin.getCryptocurrency());
-                            TestcoinsDB.add(coin.getCryptocurrency());
-                            //MainActivity.coins.add(coin);
-                        }
-
-                        @Override
-                        public void onCancelled(DatabaseError error) {
-                            // Failed to read value
-                            //Toast.makeText(context, "Failed to fetch data from database!", Toast.LENGTH_SHORT).show();
-                        }
-                    });
-                }
-                callbackDB.onSuccess(TestcoinsDB);
-            }
-
-            @Override
-            public void onCancelled(DatabaseError error) {
-                // Failed to read value
-                //Toast.makeText(context, "Failed to fetch data from database!", Toast.LENGTH_SHORT).show();
-            }
-        });
-
-    }
-*/
-    public void addCoin(CoinDB coin){
-        /*
-        System.out.println("DB Request add coin "+coin);
-        rootRef = database.getReference("users");
-        rootRef.child(currUser.getUid()).child("coins").push().setValue(coin);
-         */
-
-        //CoinDB coin = new CoinDB("Bitcoin");
-        usersRef.child(currUser.getUid()).child("coins").child(coin.getCryptocurrency()).setValue(coin);
-    }
-
-    public void addWallet(Wallet wallet){
-        System.out.println("DB Request to add wallet ");
-        usersRef.child(currUser.getUid()).child("wallets").push().setValue(wallet);
-    }
-
-    public void addTransaction(CoinDB coin){
-        usersRef.child(currUser.getUid()).child("coins").child(coin.getCryptocurrency()).child("transactions").setValue(coin.getTransactions());
-    }
 
     public void getUserCoins(final CallbackDB callback){
 /*
@@ -182,11 +93,79 @@ public class Database {
             }
         });
     }
+
+    public void getUserWallets(final CallbackDB callback){
+
+        ArrayList<String> keys = new ArrayList<>();
+        ArrayList<Wallet> walletsDB = new ArrayList<>();
+        DatabaseReference keysRef = database.getReference("users").child(currUser.getUid()).child("wallets");
+        keysRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if(!dataSnapshot.exists()){
+                    WalletActivity.pbWallets.setVisibility(View.GONE);
+                    WalletActivity.btnAddWallet.setVisibility(View.VISIBLE);
+                }
+
+                for(DataSnapshot ds : dataSnapshot.getChildren()){
+                    keys.add(ds.getKey());
+                }
+                for(String walletKey: keys){
+                    DatabaseReference walletRef = database.getReference("users").child(currUser.getUid()).child("wallets").child(walletKey);
+                    walletRef.addListenerForSingleValueEvent(new ValueEventListener() {
+
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            Wallet wallet = dataSnapshot.getValue(Wallet.class);
+                            walletsDB.add(wallet);
+                            System.out.println("DB Result: Wallet = "+wallet.getWalletName());
+                            if(walletsDB.size() == keys.size()){
+                                callback.onSuccessWallets(walletsDB);
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError error) {
+                            // Failed to read value
+                            //Toast.makeText(context, "Failed to fetch data from database!", Toast.LENGTH_SHORT).show();
+                            System.out.println("Failed to read: Inner");
+                        }
+                    });
+                }
+            }
+
+
+            @Override
+            public void onCancelled(DatabaseError error) {
+                // Failed to read value
+                //Toast.makeText(context, "Failed to fetch data from database!", Toast.LENGTH_SHORT).show();
+                System.out.println("Failed to read: Outer");
+            }
+        });
+    }
+    public void addCoin(CoinDB coin){
+        usersRef.child(currUser.getUid()).child("coins").child(coin.getCryptocurrency()).setValue(coin);
+    }
+
+    public void addWallet(Wallet wallet){
+        usersRef.child(currUser.getUid()).child("wallets").child(wallet.getWalletAddress()).setValue(wallet);
+    }
+
+    public void addTransaction(CoinDB coin){
+        usersRef.child(currUser.getUid()).child("coins").child(coin.getCryptocurrency()).child("transactions").setValue(coin.getTransactions());
+    }
     
     public void updateCoinPosition(CoinDB coin){
         usersRef.child(currUser.getUid()).child("coins").child(coin.getCryptocurrency()).child("position").setValue(coin.getPosition());
     }
     public void removeCoin(CoinDB coin){
         usersRef.child(currUser.getUid()).child("coins").child(coin.getCryptocurrency()).removeValue();
+    }
+
+    public void updateWalletPosition(Wallet wallet){
+        usersRef.child(currUser.getUid()).child("wallets").child(wallet.getWalletAddress()).child("position").setValue(wallet.getPosition());
+    }
+    public void removeWallet(Wallet wallet){
+        usersRef.child(currUser.getUid()).child("wallets").child(wallet.getWalletAddress()).removeValue();
     }
 }

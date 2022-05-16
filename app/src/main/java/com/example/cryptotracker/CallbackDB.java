@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 public interface CallbackDB {
     void onInit();
-    //void onSuccess(ArrayList<String> coinsDB);
+    void onSuccessWallets(ArrayList<Wallet> walletsDB);
     void onSuccess(ArrayList<CoinDB> coinsDB);
 
 }

@@ -45,12 +45,9 @@ public class WalletScraper extends AsyncTask<Void, Void, Void> {
             WalletActivity.pbWallets.startAnimation(AnimationUtils.loadAnimation(context, android.R.anim.fade_out));
             WalletActivity.btnAddWallet.setVisibility(View.VISIBLE);
             adapter.notifyDataSetChanged();
-            //MainActivity.coins.clear();
         } else {
-            //adapter.notifyItemRangeChanged(0, MainActivity.cardItems.size()-1);
-            adapter.notifyItemInserted(WalletActivity.wallets.size() - 1);
-            //adapter.notifyDataSetChanged();
-            //MainActivity.coins.clear();
+            //adapter.notifyItemInserted(WalletActivity.wallets.size() - 1);
+            adapter.notifyDataSetChanged();
             //Toast.makeText(context,"Coin added successfully!", Toast.LENGTH_SHORT).show();
             //WalletActivity.rvWallets.scrollToPosition(MainActivity.cardItems.size() - 1);
         }
@@ -64,7 +61,7 @@ public class WalletScraper extends AsyncTask<Void, Void, Void> {
                     scrapeAtom(WalletActivity.wallets.get(i).getWalletAddress());
                     break;
                 case "Bitcoin":
-                    //scrapeBitcoin();
+                    scrapeBitcoin();
                     break;
                 case "BNB":
                     //scrapeBNB();
@@ -80,6 +77,21 @@ public class WalletScraper extends AsyncTask<Void, Void, Void> {
             }
         }
         return null;
+    }
+
+    private void scrapeBitcoin(){
+        try{
+            String query = "https://www.blockchain.com/btc/address/bc1qwlq25yqqxt6dt5v4pkmt6xxmuqypxut9xqkh2t";
+            Document document = Jsoup.connect(query).get();
+            for(Element element : document.getAllElements()){
+                if(element.dataset().containsKey("sc-1xo2hia-0 jhFHoy")){
+                    System.out.println(element);
+                }
+            }
+        }
+        catch(IOException e){
+            e.printStackTrace();
+        }
     }
 
     private void scrapeAtom(String walletAddress){

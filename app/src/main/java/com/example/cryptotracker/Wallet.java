@@ -7,16 +7,17 @@ public class Wallet {
     private String walletName;
     private String walletAddress;
     private String blockchain;
-    private String walletUSD;
-    private String walletAmount;
+    private int position;
 
-    public Wallet(String walletName, String walletAddress, String blockchain, String walletUSD, String walletAmount){
+    public Wallet(String walletName, String walletAddress, String blockchain, int position){
         this.walletName = walletName;
         this.walletAddress = walletAddress;
         this.blockchain = blockchain;
-        this.walletUSD = walletUSD;
-        this.walletAmount = walletAmount;
+        this.position = position;
     }
+
+    public Wallet(){}
+
     public String getWalletName() {
         return walletName;
     }
@@ -29,11 +30,12 @@ public class Wallet {
         return blockchain;
     }
 
-    public String getWalletUSD() {
-        return walletUSD;
+
+    public int getPosition() {
+        return position;
     }
 
-    public String getWalletAmount() {
-        return walletAmount;
+    public void setPosition(int position) {
+        this.position = position;
     }
 }

@@ -23,6 +23,7 @@
             android:layout_height="175dp">
 
             <ImageView
+                android:id="@+id/bg_img_gradient"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@drawable/gradient"/>
@@ -31,7 +32,8 @@
                 android:id="@+id/imgWallet"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_margin="25dp"
+                android:paddingTop="20dp"
+                android:layout_marginBottom="30dp"
                 android:scaleType="fitCenter" />
 
 
@@ -43,11 +45,13 @@
                 android:textSize="20dp"
                 android:textColor="@color/black"
                 android:id="@+id/tvWalletName"/>
-            <RelativeLayout
+
+        <RelativeLayout
                 android:id="@+id/loChange"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="8dp"
+                android:layout_marginTop="5dp"
+                android:paddingTop="10dp"
                 android:layout_gravity="bottom"
                 android:orientation="horizontal">
 
@@ -55,24 +59,24 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@+id/tvWalletUSD"
                     android:padding="5dp"
-                    android:text="Amount of Coin"
+                    android:text="Address"
                     android:gravity="right"
                     android:textSize="15sp"
+                    android:layout_centerVertical="true"
+                    android:layout_toLeftOf="@+id/imgCopyAddress"
                     android:textColor="@color/black"
-                    android:id="@+id/tvWalletAmount"/>
+                    android:id="@+id/tvCopyWalletAddress"/>
 
+                <ImageView
+                    android:id="@+id/imgCopyAddress"
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_centerVertical="true"
+                    android:layout_alignParentEnd="true"
+                    android:src="@drawable/ic_copy_link_24" />
 
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:padding="5dp"
-                    android:text="USD"
-                    android:gravity="right"
-                    android:textSize="15sp"
-                    android:textColor="@color/black"
-                    android:id="@+id/tvWalletUSD"/>
             </RelativeLayout>
 
 

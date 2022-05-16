@@ -2,6 +2,8 @@ package com.example.cryptotracker;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
+import androidx.core.widget.NestedScrollView;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -21,12 +23,15 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 public class WalletActivity extends AppCompatActivity {
     static ArrayList<Wallet> wallets = new ArrayList();
     private LinearLayout btnCoins;
+    static NestedScrollView nestedSVWallets;
     private RecyclerView rvWallets;
-    private RecyclerView.Adapter adapterWallets;
+    private AdapterWallets adapterWallets;
     private RecyclerView.LayoutManager lmWallets;
     static ProgressBar pbWallets;
     static CardView btnAddWallet;
@@ -43,8 +48,24 @@ public class WalletActivity extends AppCompatActivity {
         //wallets.add(new Wallet("Kraken Wallet","wsdsef44523847dhsvf","Bitcoin","$350", "0.0083443 BTC"));
 
         db = new Database();
-
         loadRecyclerView();
+        db.getUserWallets(new CallbackDB() {
+            @Override
+            public void onInit() {}
+
+            @Override
+            public void onSuccessWallets(ArrayList<Wallet> walletsDB) {
+                wallets.clear();
+                wallets.addAll(walletsDB);
+                sortWallets();
+                adapterWallets.notifyDataSetChanged();
+                pbWallets.setVisibility(View.GONE);
+                btnAddWallet.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public void onSuccess(ArrayList<CoinDB> coinsDB) {}
+        });
 
         btnCoins.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -62,11 +83,17 @@ public class WalletActivity extends AppCompatActivity {
     }
 
     private void loadRecyclerView(){
+        nestedSVWallets = findViewById(R.id.nestedSVWallets);
         rvWallets = findViewById(R.id.rvWallets);
+        rvWallets.setNestedScrollingEnabled(false);
         //recyclerView.setHasFixedSize(true);//if I know it won't change in size
         lmWallets = new LinearLayoutManager(this);
         adapterWallets = new AdapterWallets(this, wallets);
         rvWallets.setLayoutManager(lmWallets);
+        ItemTouchHelper.Callback ithCallback = new RvItemTouchHelper(adapterWallets, Boolean.TRUE, Boolean.TRUE);
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(ithCallback);
+        adapterWallets.setItemTouchHelper(itemTouchHelper);
+        itemTouchHelper.attachToRecyclerView(rvWallets);
         rvWallets.setAdapter(adapterWallets);
     }
 
@@ -96,17 +123,12 @@ public class WalletActivity extends AppCompatActivity {
         btnAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                /*
-                coins.add(txtCoin.getText().toString());
-                db.addCoin(txtCoin.getText().toString());
-                Scraper scraper = new Scraper(MainActivity.this, adapter, Boolean.FALSE);
-                scraper.execute();
-                   */
-                Wallet wallet = new Wallet(txtWalletName.getText().toString(), txtWalletAddress.getText().toString(), spinner.getItemAtPosition(spinner.getSelectedItemPosition()).toString(),"10","$20");
+                Wallet wallet = new Wallet(txtWalletName.getText().toString(), txtWalletAddress.getText().toString(), spinner.getItemAtPosition(spinner.getSelectedItemPosition()).toString(), WalletActivity.wallets.size());
                 wallets.add(wallet);
                 db.addWallet(wallet);
-                WalletScraper walletScraper = new WalletScraper(WalletActivity.this, adapterWallets, Boolean.FALSE);
-                walletScraper.execute();
+
+                //WalletScraper walletScraper = new WalletScraper(WalletActivity.this, adapterWallets, Boolean.FALSE);
+                //walletScraper.execute();
 
                 adapterWallets.notifyDataSetChanged();
 
@@ -115,5 +137,15 @@ public class WalletActivity extends AppCompatActivity {
         });
 
         dialog.show();
+    }
+
+    public static void sortWallets(){
+        Collections.sort(wallets, new Comparator<Wallet>() {
+            @Override
+            public int compare(Wallet o1, Wallet o2) {
+                if( o1.getPosition() > o2.getPosition()) return 1;
+                else return -1;
+            }
+        });
     }
 }

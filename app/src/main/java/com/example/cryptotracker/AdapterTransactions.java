@@ -1,13 +1,16 @@
 package com.example.cryptotracker;
 
+import android.app.Activity;
 import android.content.Context;
 import android.gesture.Gesture;
 import android.graphics.Color;
+import android.provider.ContactsContract;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -20,9 +23,12 @@ import java.util.ArrayList;
 
 public class AdapterTransactions extends RecyclerView.Adapter<AdapterTransactions.ViewHolder> implements ItemTouchHelperAdapter{
     private ArrayList<CoinTransaction> coinTransactions;
-    Context context;
+    private Context context;
     private String symbol;
+    private Double currPrice;
     private ItemTouchHelper itemTouchHelper;
+    private DecimalFormat df = new DecimalFormat("#");
+    private Database db = new Database();
 
     @Override
     public void onItemMove(int fromPosition, int toPosition) {
@@ -34,7 +40,59 @@ public class AdapterTransactions extends RecyclerView.Adapter<AdapterTransaction
 
     @Override
     public void onItemSwiped(int position) {
-        coinTransactions.remove(position);
+        CoinTransaction coinTransaction = coinTransactions.get(position);
+        coinTransactions.remove(coinTransaction);
+        
+        Double value = 0.0, holdings = 0.0;
+        for(CoinTransaction transaction : coinTransactions){
+            value += transaction.getUSD();
+            holdings += transaction.getAmountCoin();
+        }
+
+        for(int i=0;i<MainActivity.coins.size();i++){
+            if(MainActivity.coins.get(i).getSymbol().equals(symbol)){
+                MainActivity.coins.get(i).removeCoinTransaction(coinTransaction);
+                db.setTransactions(MainActivity.coins.get(i));
+                MainActivity.cardItems.get(i).setHoldings(holdings);
+                MainActivity.cardItems.get(i).setValue(value);
+                MainActivity.adapter.notifyDataSetChanged();
+            }
+        }
+
+        TextView tvTotalBalance = (TextView) ((Activity) context).findViewById(R.id.tvTotalBalance);
+        TextView tvTotalInvested = (TextView) ((Activity) context).findViewById(R.id.tvTotalInvested);
+        TextView tvHoldings = (TextView) ((Activity) context).findViewById(R.id.tvTotalHoldings);
+        TextView tvAvgBuyPrice = (TextView) ((Activity) context).findViewById(R.id.tvAvgBuyPrice);
+        TextView tvPNL = (TextView) ((Activity) context).findViewById(R.id.tvPNL);
+        LinearLayout llPNL = (LinearLayout) ((Activity) context).findViewById(R.id.llPNL);
+
+        tvTotalBalance.setText("$"+String.format("%.2f", holdings*currPrice));
+        tvTotalInvested.setText("$"+String.format("%.2f", value)+" Total investment");
+        tvHoldings.setText(df.format(holdings)+" "+symbol);
+
+        try{
+            Double average = value/holdings;
+            Double pnl = holdings*currPrice - holdings*average;
+
+
+            if(!Double.isNaN(average)){
+                tvAvgBuyPrice.setText(String.format("$%.2f", average));
+            }
+            if(pnl>0){
+                llPNL.setBackground(context.getResources().getDrawable(R.drawable.colour_minty));
+                tvPNL.setText(String.format("$%.2f", pnl));
+            }
+            else if(pnl<0){
+                llPNL.setBackground(context.getResources().getDrawable(R.drawable.colour_red));
+                tvPNL.setText(String.format("$%.2f", pnl).replace("$-","-$"));
+            }
+        }
+        catch(ArithmeticException e){
+            e.printStackTrace();
+            tvAvgBuyPrice.setText("$0");
+            tvPNL.setText("$0");
+        }
+
         notifyItemRemoved(position);
     }
 
@@ -92,10 +150,11 @@ public class AdapterTransactions extends RecyclerView.Adapter<AdapterTransaction
         }
     }
 
-    public AdapterTransactions(Context context, ArrayList<CoinTransaction> coinTransactions, String symbol){
+    public AdapterTransactions(Context context, ArrayList<CoinTransaction> coinTransactions, String symbol, Double currPrice){
         this.context = context;
         this.coinTransactions = coinTransactions;
         this.symbol=symbol;
+        this.currPrice = currPrice;
     }
 
     @NonNull

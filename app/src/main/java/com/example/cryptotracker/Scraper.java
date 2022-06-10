@@ -18,12 +18,12 @@ import org.jsoup.nodes.Element;
 import java.io.IOException;
 
 public class Scraper extends AsyncTask<Void, Void, Void> {
-    Context context;
-    RecyclerView.Adapter adapter;
+    private Context context;
+    private RecyclerView.Adapter adapter;
     private boolean initFlag;
     private boolean existingItemFlag = Boolean.FALSE;
     private int existingItemPosition;
-    Database db = new Database();
+    private Database db = new Database();
 
 
     public Scraper(Context context, RecyclerView.Adapter adapter, boolean initFlag) {
@@ -119,6 +119,13 @@ public class Scraper extends AsyncTask<Void, Void, Void> {
             element = document.select("div.priceValue").first();
             String price = element.select("span").text();
             System.out.println(price);
+            if(price.startsWith("BGN")){
+                price = price.substring(3);
+                Double decimalPrice = Double.parseDouble(price);
+                decimalPrice *= 0.54;
+                price = "$"+String.format("%.2f", decimalPrice);
+                System.out.println("New price = "+price);
+            }
             //24h Change
             element = document.select("span.sc-15yy2pl-0").first();
             String change24h = element.text();

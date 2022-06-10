@@ -1,6 +1,5 @@
 package com.example.cryptotracker;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -113,7 +112,6 @@ public class TransactionsActivity extends AppCompatActivity {
 
             @Override
             public void onClick(View view) {
-
                 addTransaction();
             }
         });
@@ -122,9 +120,8 @@ public class TransactionsActivity extends AppCompatActivity {
 
     private void loadRecyclerView(){
         rvTransactions = findViewById(R.id.rvTransactions);
-        //recyclerView.setHasFixedSize(true);//if I know it won't change in size
         lmTransactions = new LinearLayoutManager(this);
-        adapterTransactions = new AdapterTransactions(this, coinTransactions, symbol);
+        adapterTransactions = new AdapterTransactions(this, coinTransactions, symbol, currPrice);
         rvTransactions.setLayoutManager(lmTransactions);
         ItemTouchHelper.Callback ithCallback = new RvItemTouchHelper(adapterTransactions, Boolean.FALSE, Boolean.TRUE);
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(ithCallback);
@@ -145,12 +142,6 @@ public class TransactionsActivity extends AppCompatActivity {
         EditText txtCryptoAmount = dialog.findViewById(R.id.txtCryptoAmount);
         TextView tvDateTime = dialog.findViewById(R.id.tvDateTime);
         RadioGroup radioGroup = dialog.findViewById(R.id.radioGroup);
-/*
-        radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                RadioButton checkedRadioButton = (RadioButton) group.findViewById(checkedId);
-            }});
-*/
 
         tvDateTime.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -232,7 +223,7 @@ public class TransactionsActivity extends AppCompatActivity {
                 for(int i=0;i<MainActivity.coins.size();i++){
                     if(MainActivity.coins.get(i).getCryptocurrency().equals(crypto)){
                         MainActivity.coins.get(i).addCoinTransaction(coinTransaction);
-                        db.addTransaction(MainActivity.coins.get(i));
+                        db.setTransactions(MainActivity.coins.get(i));
                     }
                 }
 
@@ -245,11 +236,13 @@ public class TransactionsActivity extends AppCompatActivity {
                         MainActivity.adapter.notifyDataSetChanged();
                     }
                 }
-
+                /*
                 tvTotalBalance.setText("$"+String.format("%.2f", holdings*currPrice));
                 tvTotalInvested.setText("$"+String.format("%.2f", value)+" Total investment");
                 tvHoldings.setText(df.format(holdings)+" "+symbol);
-                calculateAvgPNL();
+                */
+                updateView();
+                //calculateAvgPNL();
                 sortDates();
                 adapterTransactions.notifyDataSetChanged();
 
@@ -298,4 +291,18 @@ public class TransactionsActivity extends AppCompatActivity {
             }
         });
     }
+
+    private void updateView(){
+        value = 0.0;
+        holdings = 0.0;
+        for(CoinTransaction transaction : coinTransactions){
+            value += transaction.getUSD();
+            holdings += transaction.getAmountCoin();
+        }
+        tvTotalBalance.setText("$"+String.format("%.2f", holdings*currPrice));
+        tvTotalInvested.setText("$"+String.format("%.2f", value)+" Total investment");
+        tvHoldings.setText(df.format(holdings)+" "+symbol);
+        calculateAvgPNL();
+    }
+
 }

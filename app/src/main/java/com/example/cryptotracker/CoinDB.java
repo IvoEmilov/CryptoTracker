@@ -53,4 +53,8 @@ public class CoinDB {
     public void addCoinTransaction(CoinTransaction transaction){
         transactions.add(transaction);
     }
+
+    public void removeCoinTransaction(CoinTransaction transaction){
+        transactions.remove(transaction);
+    }
 }

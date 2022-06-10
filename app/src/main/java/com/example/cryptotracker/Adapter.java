@@ -163,7 +163,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> implements
         DecimalFormat df = new DecimalFormat("#");
         df.setMaximumFractionDigits(12);
         holder.tvHoldings.setText(df.format(cardItem.getHoldings())+" "+cardItem.getCoin().getSymbol());
-        holder.tvValue.setText("$"+String.format("%.2f", cardItem.getValue()));
+        //holder.tvValue.setText("$"+String.format("%.2f", cardItem.getValue()));
         holder.tvValue.setText(String.format("$%.2f",cardItem.getHoldings()*Double.parseDouble(cardItem.getPrice().substring(1).replace(",", ""))));
 
         holder.cardView.setOnClickListener(new View.OnClickListener() {

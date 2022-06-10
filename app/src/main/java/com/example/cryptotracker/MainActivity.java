@@ -39,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView.LayoutManager layoutManager;
     static ProgressBar progressBar;
     static CardView btnAddCoin;
-    Database db;
+    private Database db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

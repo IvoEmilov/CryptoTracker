@@ -35,7 +35,7 @@ public class WalletActivity extends AppCompatActivity {
     private RecyclerView.LayoutManager lmWallets;
     static ProgressBar pbWallets;
     static CardView btnAddWallet;
-    Database db;
+    private Database db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,7 +45,6 @@ public class WalletActivity extends AppCompatActivity {
         btnCoins = findViewById(R.id.btnCoins);
         btnAddWallet = findViewById(R.id.btnAddWallet);
         pbWallets = findViewById(R.id.pbWallets);
-        //wallets.add(new Wallet("Kraken Wallet","wsdsef44523847dhsvf","Bitcoin","$350", "0.0083443 BTC"));
 
         db = new Database();
         loadRecyclerView();
@@ -126,10 +125,6 @@ public class WalletActivity extends AppCompatActivity {
                 Wallet wallet = new Wallet(txtWalletName.getText().toString(), txtWalletAddress.getText().toString(), spinner.getItemAtPosition(spinner.getSelectedItemPosition()).toString(), WalletActivity.wallets.size());
                 wallets.add(wallet);
                 db.addWallet(wallet);
-
-                //WalletScraper walletScraper = new WalletScraper(WalletActivity.this, adapterWallets, Boolean.FALSE);
-                //walletScraper.execute();
-
                 adapterWallets.notifyDataSetChanged();
 
                 dialog.dismiss();

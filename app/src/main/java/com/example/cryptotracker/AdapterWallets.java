@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.ItemTouchHelper;
@@ -24,7 +25,7 @@ import java.util.ArrayList;
 public class AdapterWallets extends RecyclerView.Adapter<AdapterWallets.ViewHolder> implements ItemTouchHelperAdapter{
     private ArrayList<Wallet> wallets;
     private ItemTouchHelper itemTouchHelper;
-    Context context;
+    private Context context;
     private Database db;
 
     @Override
@@ -167,6 +168,7 @@ public class AdapterWallets extends RecyclerView.Adapter<AdapterWallets.ViewHold
                 ClipboardManager clipboard = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
                 ClipData clip = ClipData.newPlainText("simple text", wallet.getWalletAddress());
                 clipboard.setPrimaryClip(clip);
+                Toast.makeText(context, "Wallet Address: "+wallet.getWalletAddress()+" copied to clipboard", Toast.LENGTH_SHORT).show();
             }
         });
 

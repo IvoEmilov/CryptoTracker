@@ -28,8 +28,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private GoogleSignInClient mGoogleSignInClient;
     private static final int RC_SIGN_IN = 1;//just random number for Google to create the intent
-
-    Button btnLogin;
+    private Button btnLogin;
     private FirebaseAuth mAuth;
 /*
     @Override
@@ -50,7 +49,6 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
 
         btnLogin = findViewById(R.id.btnLogin);
-
         mAuth = FirebaseAuth.getInstance();
 
         loginRequest();
@@ -71,7 +69,7 @@ public class LoginActivity extends AppCompatActivity {
                 .build();
 
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
-        //mGoogleSignInClient.revokeAccess(); //forces intent to choose account
+        mGoogleSignInClient.revokeAccess(); //forces intent to choose account
     }
 
     private void signIn() {

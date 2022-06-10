@@ -16,8 +16,8 @@ import org.jsoup.nodes.Element;
 import java.io.IOException;
 
 public class WalletScraper extends AsyncTask<Void, Void, Void> {
-    Context context;
-    RecyclerView.Adapter adapter;
+    private Context context;
+    private RecyclerView.Adapter adapter;
     private boolean initFlag;
 
 

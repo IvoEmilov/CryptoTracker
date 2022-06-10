@@ -68,5 +68,6 @@ public class RvItemTouchHelper extends ItemTouchHelper.Callback {
     public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
         System.out.println("DRAGGING");
         ithAdapter.onItemSwiped(viewHolder.getAdapterPosition());
+
     }
 }

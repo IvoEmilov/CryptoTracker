@@ -121,7 +121,7 @@ public class Scraper extends AsyncTask<Void, Void, Void> {
             System.out.println(price);
             if(price.startsWith("BGN")){
                 price = price.substring(3);
-                Double decimalPrice = Double.parseDouble(price);
+                Double decimalPrice = Double.parseDouble(price.replace(",",""));
                 decimalPrice *= 0.54;
                 price = "$"+String.format("%.2f", decimalPrice);
                 System.out.println("New price = "+price);

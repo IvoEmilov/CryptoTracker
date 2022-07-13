@@ -42,7 +42,7 @@ public class AdapterTransactions extends RecyclerView.Adapter<AdapterTransaction
     public void onItemSwiped(int position) {
         CoinTransaction coinTransaction = coinTransactions.get(position);
         coinTransactions.remove(coinTransaction);
-        
+
         Double value = 0.0, holdings = 0.0;
         for(CoinTransaction transaction : coinTransactions){
             value += transaction.getUSD();
@@ -67,17 +67,36 @@ public class AdapterTransactions extends RecyclerView.Adapter<AdapterTransaction
         LinearLayout llPNL = (LinearLayout) ((Activity) context).findViewById(R.id.llPNL);
 
         tvTotalBalance.setText("$"+String.format("%.2f", holdings*currPrice));
-        tvTotalInvested.setText("$"+String.format("%.2f", value)+" Total investment");
+        //tvTotalInvested.setText("$"+String.format("%.2f", value)+" Total investment");
         tvHoldings.setText(df.format(holdings)+" "+symbol);
+
+        Double buyValue = 0.0;
+        Double buyHoldings = 0.0;
+
+        for(CoinTransaction transaction:coinTransactions){
+            if(transaction.getBuySell().equals("Buy")){
+                buyValue+=transaction.getUSD();
+                buyHoldings+=transaction.getAmountCoin();
+            }
+        }
+        tvTotalInvested.setText("$"+String.format("%.2f", buyValue)+" Total investment");
+
+        try{
+            Double buyAverage = buyValue/buyHoldings;
+
+            if(!Double.isNaN(buyAverage)){
+                tvAvgBuyPrice.setText(String.format("$%.2f", buyAverage));
+            }
+        }
+        catch(ArithmeticException e){
+            e.printStackTrace();
+            tvAvgBuyPrice.setText("$0");
+        }
 
         try{
             Double average = value/holdings;
             Double pnl = holdings*currPrice - holdings*average;
 
-
-            if(!Double.isNaN(average)){
-                tvAvgBuyPrice.setText(String.format("$%.2f", average));
-            }
             if(pnl>0){
                 llPNL.setBackground(context.getResources().getDrawable(R.drawable.colour_minty));
                 tvPNL.setText(String.format("$%.2f", pnl));
@@ -87,9 +106,8 @@ public class AdapterTransactions extends RecyclerView.Adapter<AdapterTransaction
                 tvPNL.setText(String.format("$%.2f", pnl).replace("$-","-$"));
             }
         }
-        catch(ArithmeticException e){
+        catch (ArithmeticException e){
             e.printStackTrace();
-            tvAvgBuyPrice.setText("$0");
             tvPNL.setText("$0");
         }
 
@@ -174,12 +192,12 @@ public class AdapterTransactions extends RecyclerView.Adapter<AdapterTransaction
         holder.tvBuySell.setText(transaction.getBuySell());
         if(transaction.getBuySell().equals("Buy")){
             holder.tvBuySell.setTextColor(Color.parseColor("#116540"));//green
-            holder.tvUSD.setText(String.format("$%.2f", transaction.getUSD()));
+            holder.tvUSD.setText(String.format("-$%.2f", transaction.getUSD()));
             holder.tvAmountCoin.setText("+"+df.format(transaction.getAmountCoin())+" "+symbol);
         }
         else{
             holder.tvBuySell.setTextColor(Color.parseColor("#e57069"));//red
-            holder.tvUSD.setText(String.format("$%.2f", transaction.getUSD()).replace("$-","-$"));
+            holder.tvUSD.setText(String.format("$%.2f", transaction.getUSD()).replace("$-","$"));
             holder.tvAmountCoin.setText(df.format(transaction.getAmountCoin())+" "+symbol);
         }
         holder.tvDate.setText(transaction.getDate());

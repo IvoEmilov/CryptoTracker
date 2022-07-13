@@ -91,7 +91,6 @@ public class TransactionsActivity extends AppCompatActivity {
 
         tvCrypto.setText(crypto);
         tvTotalBalance.setText("$"+String.format("%.2f", holdings*currPrice));
-        tvTotalInvested.setText("$"+String.format("%.2f", value)+" Total investment");
         tvHoldings.setText(df.format(holdings)+" "+symbol);
         Picasso.with(this).load(imgUrl).into(imgCoin);
         calculateAvgPNL();
@@ -254,14 +253,33 @@ public class TransactionsActivity extends AppCompatActivity {
     }
 
     private void calculateAvgPNL(){
+        Double buyValue = 0.0;
+        Double buyHoldings = 0.0;
+
+        for(CoinTransaction transaction:coinTransactions){
+            if(transaction.getBuySell().equals("Buy")){
+                buyValue+=transaction.getUSD();
+                buyHoldings+=transaction.getAmountCoin();
+            }
+        }
+        tvTotalInvested.setText("$"+String.format("%.2f", buyValue)+" Total investment");
+
+        try{
+            Double buyAverage = buyValue/buyHoldings;
+
+            if(!Double.isNaN(buyAverage)){
+                    tvAvgBuyPrice.setText(String.format("$%.2f", buyAverage));
+            }
+        }
+        catch(ArithmeticException e){
+            e.printStackTrace();
+            tvAvgBuyPrice.setText("$0");
+        }
+
         try{
             Double average = value/holdings;
             Double pnl = holdings*currPrice - holdings*average;
 
-
-            if(!Double.isNaN(average)){
-                tvAvgBuyPrice.setText(String.format("$%.2f", average));
-            }
             if(pnl>0){
                 llPNL.setBackground(getResources().getDrawable(R.drawable.colour_minty));
                 tvPNL.setText(String.format("$%.2f", pnl));
@@ -271,9 +289,8 @@ public class TransactionsActivity extends AppCompatActivity {
                 tvPNL.setText(String.format("$%.2f", pnl).replace("$-","-$"));
             }
         }
-        catch(ArithmeticException e){
+        catch (ArithmeticException e){
             e.printStackTrace();
-            tvAvgBuyPrice.setText("$0");
             tvPNL.setText("$0");
         }
     }

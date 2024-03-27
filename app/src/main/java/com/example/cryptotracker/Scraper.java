@@ -4,6 +4,7 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Handler;
+import android.util.Log;
 import android.view.View;
 import android.view.animation.AnimationUtils;
 import android.widget.Toast;
@@ -81,22 +82,26 @@ public class Scraper extends AsyncTask<Void, Void, Void> {
         Double value = 0.0, holdings=0.0;
 
         try {
-            String query = "https://www.google.com/search?q=coinmarketcap+" + coin.getCryptocurrency();
-            Document document = Jsoup.connect(query).get();
-            Element element = document.select("div.yuRUbf > a").first();
-            String url = element.attr("href"); //1st Google result
-
+//            String query = "https://www.google.com/search?q=coinmarketcap+" + coin.getCryptocurrency();
+//            Document document = Jsoup.connect(query).get();
+//            //Log.d("Document", document.text());
+//            Element element = document.select("div.yuRUbf > a").first();
+//            String url = element.attr("href"); //1st Google result
+            Document document;
+            Element element;
+            String url = "https://coinmarketcap.com/currencies/" + coin.getCryptocurrency();
             document = Jsoup.connect(url).get();
             //Image
-            element = document.select("div.sc-16r8icm-0.gpRPnR.nameHeader > img").first();
+            element = document.select("div.sc-f70bb44c-0.jImtlI > img").first();
             String imgURL = element.attr("src");
+            Log.d("imgUrl", imgURL);
             //Coin Name + Symbol
-            element = document.select("h2.sc-1q9q90x-0.jCInrl.h1").first();
-            String symbol = element.select("small.nameSymbol").text();
-//            System.out.println("Symbol="+symbol);
-            element.select("small.nameSymbol").remove(); //removes BTC abrv
-            String coinName = element.text();
-            System.out.println(coinName);
+            element = document.select("div.sc-f70bb44c-0.eseBKW").first();
+            String symbol = element.select("span.sc-f70bb44c-0.dXQGRd").text();
+            //element.select("small.nameSymbol").remove(); //removes BTC abrv
+            String coinNameFull = element.select("span.sc-f70bb44c-0.jltoa").text();
+            String[] coinNameArr = coinNameFull.split("\\s+");
+            String coinName = coinNameArr[0];
             //Get value and holdings of crypto for cardItemView
             if(!initFlag){
                 for(CardItem cardItem:MainActivity.cardItems){
@@ -116,9 +121,9 @@ public class Scraper extends AsyncTask<Void, Void, Void> {
                 }
             }
             //Price
-            element = document.select("div.priceValue").first();
+            element = document.select("div.sc-f70bb44c-0.flfGQp").first();
             String price = element.select("span").text();
-            System.out.println(price);
+            Log.d("price", price);
             if(price.startsWith("BGN")){
                 price = price.substring(3);
                 Double decimalPrice = Double.parseDouble(price.replace(",",""));
@@ -127,14 +132,19 @@ public class Scraper extends AsyncTask<Void, Void, Void> {
                 System.out.println("New price = "+price);
             }
             //24h Change
-            element = document.select("span.sc-15yy2pl-0").first();
-            String change24h = element.text();
+            element = document.select("div.sc-f70bb44c-0.cOoglq").first();
+            String change24h = element.text().split("\\s+")[0];
+            Log.d("24h", change24h);
             try {
-                element.select("span.icon-Caret-up").first().remove();
-                change24h = "+" + change24h;
+                String color = element.select("p").first().attr("color");
+                if(color.equals("green")){
+                    change24h = "+" + change24h;
+                }
+                else{
+                    change24h = "-" + change24h;
+                }
             } catch (NullPointerException e) {
-                //e.printStackTrace();
-                change24h = "-" + change24h;
+                e.printStackTrace();
             }
             MainActivity.cardItems.add(new CardItem(Uri.parse(imgURL), coin,price, change24h));
             db.addCoin(coin);

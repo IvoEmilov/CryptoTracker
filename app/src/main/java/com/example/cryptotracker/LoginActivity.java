@@ -107,11 +107,10 @@ public class LoginActivity extends AppCompatActivity {
                             //Toast.makeText(LoginActivity.this, "Login Successful", Toast.LENGTH_SHORT).show();
                             FirebaseUser user = mAuth.getCurrentUser();
                             Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-
                             startActivity(intent);
                         } else {
                             // If sign in fails, display a message to the user.
-                            Toast.makeText(LoginActivity.this, "Sign in with credetials failed!", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(LoginActivity.this, "Sign in with credentials failed!", Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
